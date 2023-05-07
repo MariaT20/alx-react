@@ -7,12 +7,10 @@ import Footer from "../Footer/Footer";
 import PropTypes from "prop-types";
 import CourseList from "../CourseList/CourseList";
 import { getLatestNotification } from "../utils/utils";
+import BodySectionWithMarginBottom from "../BodySection/BodySectionWithMarginBottom";
+import BodySection from "../BodySection/BodySection";
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   listCourses = [
     {
       id: 1,
@@ -37,6 +35,29 @@ class App extends React.Component {
     { id: 3, html: { __html: getLatestNotification() }, type: "urgent" },
   ];
 
+  constructor(props) {
+    super(props);
+    this.isLoggedIn = props.isLoggedIn;
+    this.logOut = props.logOut;
+    this.handleKeyPress = this.handleKeyPress.bind(this);
+  }
+
+  handleKeyPress(e) {
+    e.preventDefault();
+    if (e.ctrlKey && e.key === "h") {
+      alert("Logging you out");
+      this.logOut();
+    }
+  }
+
+  componentDidMount() {
+    window.addEventListener("keydown", this.handleKeyPress);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("keydown", this.handleKeyPress);
+  }
+
   render() {
     return (
       <>
@@ -44,12 +65,15 @@ class App extends React.Component {
         <div className="App">
           <Header />
           {this.props.isLoggedIn ? (
-            <CourseList listCourses={this.listCourses} />
+            <BodySectionWithMarginBottom title='Course list'><CourseList listCourses={this.listCourses} /></BodySectionWithMarginBottom>
           ) : (
-            <Login />
+            <BodySectionWithMarginBottom title='Log in to continue'><Login /></BodySectionWithMarginBottom>
           )}
           <Footer />
         </div>
+        <BodySection title='News from the School'>
+          <p>lorem20kkl jasimcqo</p>
+        </BodySection>
       </>
     );
   }
@@ -57,10 +81,12 @@ class App extends React.Component {
 
 App.defaultProps = {
   isLoggedIn: false,
+  logOut: () => {},
 };
 
 App.propTypes = {
   isLoggedIn: PropTypes.bool,
+  logOut: PropTypes.func,
 };
 
 export default App;
